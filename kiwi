@@ -1,0 +1,353 @@
+typedef struct {
+
+    char nombre [30];
+    int puntos ;
+
+}jugador;
+
+
+int elegirDIFICULTAD ();
+void cargarARCHIVO ();
+int cantidad_letras (char palabraElegida [10]);
+int comparar_letra (char palabraElegida[10], int dimension);
+int jugar4 (char palabraElegida[10], int dimension);
+int jugar6 (char palabraElegida[10], int dimension);
+int jugar8 (char palabraElegida[10], int dimension);
+int puntaje (int fallos);
+void cargar_puntos(int puntos);
+void mostrar_archivo ();
+
+int main()
+{
+  int dimension;
+  int fallos;
+  char palabraElegida [10];
+  char continuar = 's';
+  int puntos;
+  char nombre[30];
+  int contador = 0;
+
+
+  while (continuar == 's'){
+
+  printf("Ingrese su nombre\n");
+  fflush(stdin);
+  scanf("%s", &nombre);
+
+  elegirDIFICULTAD ( palabraElegida);
+
+  dimension = cantidad_letras(palabraElegida);
+
+  if (dimension == 4){
+  printf("La palabra que tiene que buscar tiene: %i letras.\n", dimension);
+  printf("_ _ _ _ \n");
+  fallos = jugar4(palabraElegida, dimension);
+  printf("USTED GANOOO La palabra es KIWI\n");
+  puntos = puntaje(fallos);
+
+    }else if(dimension == 6){
+     printf("La palabra que tiene que buscar tiene: %i letras.\n", dimension);
+     printf("_ _ _ _ _ _ \n");
+    fallos = jugar6(palabraElegida, dimension);
+    printf("USTED GANOOO La palabra es PELOTA\n");
+    puntos = puntaje(fallos);
+
+        }else if(dimension == 8){
+        printf("La palabra que tiene que buscar tiene: %i letras.\n", dimension);
+        printf("_ _ _ _ _ _ _ _ \n");
+        fallos = jugar8(palabraElegida, dimension);
+        printf("\n USTED GANOOO La palabra es TECLADOS\n");
+        puntos = puntaje(fallos);
+
+        }
+    printf("Ingrese 's' si quiere volver a jugar\n");
+    fflush(stdin);
+    scanf("%c", &continuar);
+    contador ++;
+    cargarARCHIVO(nombre, puntos, contador);
+  }
+mostrar_archivo();
+}
+
+
+void cargarARCHIVO (char nombre[30], int puntos, int contador){
+    jugador dato;
+
+    FILE *archivo;
+    archivo = fopen("miarchivo.bin","ab");
+
+
+
+    if ( archivo!= NULL){
+
+            dato.puntos = puntos;
+            strcpy(dato.nombre, nombre);
+
+            fwrite(&dato,sizeof(jugador),1,archivo);
+
+       }
+     fclose(archivo);
+}
+
+
+int elegirDIFICULTAD ( char palabraElegida [10]){
+
+    char palabra4[10] = {"kiwi"};
+    char palabra6[10] = {"pelota"};
+    char palabra8[10] = {"teclados"};
+
+    int flag = 1;
+    int cantidad = 0;
+
+    printf("ingrese con la cantidad de letras con las que quiere jugar \n 4 / 6 / 8 \n ");
+    fflush(stdin);
+    scanf("%i",&cantidad);
+
+    if(cantidad == 4 && flag == 1){
+        strcpy(palabraElegida,palabra4);
+    }
+    else if(cantidad == 6 && flag == 1){
+        strcpy (palabraElegida,palabra6);
+        }
+        else if(cantidad == 8 && flag == 1){
+            strcpy(palabraElegida,palabra8);
+        }
+        else{
+            printf("ingrese una cantidad de letras  validas \n");
+            flag == 0;
+        }
+
+
+}
+
+int cantidad_letras (char palabraElegida [10]){
+int dim;
+
+dim = strlen(palabraElegida);
+
+return dim;
+}
+
+int comparar_letra (char palabraElegida[10], int dimension){
+char letra1;
+int contador = -1;
+int posicion = -1;
+
+printf("ingrese una letra\n");
+fflush(stdin);
+scanf("%c", &letra1);
+
+for (contador = 0; contador<dimension; contador++){
+        if(palabraElegida[contador] == letra1){
+            posicion = contador;
+        }
+    }
+    if (posicion == -1){
+        printf("La letra no esta en la palabra\n");
+    }
+return posicion;
+}
+
+int jugar4 (char palabraElegida[10], int dimension){
+int letra1 = 0;
+int errores = 0;
+int bien = 0;
+int kilo=0;
+int impa=0;
+int wili=0;
+int contador = 0;
+
+    while(errores<7 && bien < dimension-1 ){
+    printf("usted va %i de 7 errores\n", errores);
+    letra1 = comparar_letra(palabraElegida, dimension);
+
+        if(letra1 == 0 && kilo==0){
+        //printf(" %c _ _ _\n", palabraElegida[letra1]);
+        bien ++;
+        kilo++;
+        }else if (letra1 == 2 && impa==0){
+           //printf("_ _ %c _\n", palabraElegida[letra1]);
+            bien ++;
+            impa++;
+                }else if(letra1 == 3 && wili==0){
+                //printf(" _ %c _ %c \n", palabraElegida[letra1], palabraElegida[letra1]);
+                bien ++;
+                wili++;
+                    }else{
+                    errores ++;
+                    }
+                        imprimir (kilo , wili , impa);
+
+                }
+
+return errores;
+}
+void imprimir (int k , int w , int i){
+
+                            if ( k==1 && w==1 && i==1){
+                                printf("KIWI \n");
+                            }
+                            else if ( k == 1 && w ==1){
+                                printf("k i _ i  FALTA UNA LETRA\n");
+
+                            }else if(k==1 && i==1){
+                                printf("k _ w _  FALTA UNA LETRA\n");
+
+                            }else if( i==1 && w==1){
+                                printf("_ i w i  FALTA UNA LETRA\n");
+                            }
+                            else if (k==1){
+                                printf("k _ _ _\n");
+
+                            }else if(i==1 ){
+                                printf("_ i _ i \n");
+
+                            }else if(w==1){
+                                printf("_ _ w _ \n");
+                            }
+
+}
+
+int jugar6 (char palabraElegida[10], int dimension){
+int letra1 = 0;
+int errores1 = 0;
+int bien = 0;
+int p=0;
+int e=0;
+int l=0;
+int o=0;
+int t=0;
+int a=0;
+
+    while(errores1<7 && bien < dimension ){
+    printf("usted va %i de 7 errores\n", errores1);
+    letra1 = comparar_letra(palabraElegida, dimension);
+        if(letra1 == 0 && p == 0){
+        printf(" %c _ _ _ _ _\n", palabraElegida[letra1]);
+        bien ++;
+        p++;
+        }else if (letra1 == 1 && e == 0){
+            printf("_ %c _ _ _ _\n", palabraElegida[letra1]);
+            bien ++;
+            e++;
+                }else if(letra1 == 2 && l==0){
+                printf(" _ _ %c _ _ _ \n", palabraElegida[letra1]);
+                bien ++;
+                l++;
+                    }else if (letra1 == 3 && o==0){
+                    printf("_ _ _ %c _ _", palabraElegida[letra1]);
+                    bien ++;
+                    o++;
+                        }else if (letra1 == 4 && t==0){
+                        printf("_ _ _ _ %c _", palabraElegida[letra1]);
+                        bien ++;
+                        t++;
+                            }else if (letra1 == 5 && a==0){
+                            printf("_ _ _ _ _ %c", palabraElegida[letra1]);
+                            bien ++;
+                            a++;
+                            }else{
+                        errores1 ++;
+                        }
+
+                }
+
+    return errores1;
+    }
+
+
+int jugar8 (char palabraElegida[10], int dimension){
+int letra2 = 0;
+int errore = 0;
+int bienn = 0;
+int t=0;
+int e=0;
+int c=0;
+int l=0;
+int a=0;
+int d=0;
+int o=0;
+int s=0;
+
+
+    while(errore<7 && bienn < dimension ){
+    printf("usted va %i de 7 errores\n", errore);
+    letra2 = comparar_letra(palabraElegida, dimension);
+        if(letra2 == 0 && t==0){
+        printf(" %c _ _ _ _ _ _ _\n", palabraElegida[letra2]);
+        bienn++;
+        t++;
+        }else if (letra2 == 1 && e==0){
+            printf("_ %c _ _ _ _ _ _\n", palabraElegida[letra2]);
+            bienn++;
+            e++;
+                }else if(letra2 == 2 && c==0){
+                printf(" _ _ %c _ _ _ _ _\n", palabraElegida[letra2]);
+                bienn ++;
+                c++;
+                    }else if (letra2 == 3 && l==0){
+                    printf("_ _ _ %c _ _ _ _", palabraElegida[letra2]);
+                    bienn ++;
+                    l++;
+                        }else if (letra2== 4 && a==0 ){
+                        printf("_ _ _ _ %c _ _ _", palabraElegida[letra2]);
+                        bienn ++;
+                        a++;
+                            }else if (letra2 == 5 && d==0){
+                            printf("_ _ _ _ _ %c _ _", palabraElegida[letra2]);
+                            bienn ++;
+                            d++;
+                                }else if(letra2 == 6 && o==0){
+                                printf("_ _ _ _ _ _ %c _", palabraElegida[letra2]);
+                                bienn ++;
+                                o++;
+                                    }else if (letra2 == 7 && s==0){
+                                    printf("_ _ _ _ _ _ _ %c", palabraElegida[letra2]);
+                                    bienn++;
+                                    s++;
+                                        }else{
+                                        errore ++;
+                                        }
+    }
+
+return errore;
+}
+
+
+
+int puntaje (int fallos){
+int total;
+
+printf("\nEl maximo de puntos que puede obtener es de 70.\n");
+printf("Se le restara 10 por cada error.\n");
+
+total = 70 - (fallos *10);
+
+printf("usted de equivico %i veces por lo tanto tuvo %i puntos\n", fallos, total);
+return total;
+}
+
+
+
+void mostrar_archivo (){
+
+    jugador dato;
+
+    FILE *archivo;
+    archivo = fopen("miarchivo.bin","rb");
+
+    if (archivo!= NULL){
+
+        while(!feof(archivo)){
+                fread(&dato,sizeof(jugador),1,archivo);
+            if(!feof(archivo)){
+                printf("------------------\n");
+                printf("Nombre: %s\n", dato.nombre);
+                printf("Puntos: %i/70\n", dato.puntos);
+                printf("------------------\n");
+               }
+         }
+    fclose(archivo);
+ }
+
+}
